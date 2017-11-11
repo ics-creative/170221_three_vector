@@ -89,3 +89,14 @@ function getCircularMotionPosition(degree) {
 
   return new THREE.Vector3(x, y, z);
 }
+
+
+// リサイズ時の処理
+window.addEventListener('resize', () => {
+  // カメラのアスペクト比を更新
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  // レンダラーのサイズを更新
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
