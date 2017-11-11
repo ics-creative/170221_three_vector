@@ -1,92 +1,91 @@
-'use strict';
+// シーン
+const scene = new THREE.Scene();
 
-(function() {
-  // シーン
-  var scene = new THREE.Scene();
+// カメラ
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+camera.position.set(0, 0, -400);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  // カメラ
-  var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-  camera.position.set(0, 0, -400);
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
+// レンダラー
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  canvas: document.querySelector('#myCanvas'),
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 
-  // レンダラー
-  var renderer = new THREE.WebGLRenderer({antialias: false});
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(1);
-  document.body.appendChild(renderer.domElement);
+let degree = 0; // 角度
+const radius = 150; // 半径
+let frontVector = new THREE.Vector3(0, -1, 0);
 
-  var degree = 0; // 角度
-  var radius = 150; // 半径
-  var frontVector = new THREE.Vector3(0, -1, 0);
+// 球
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(10),
+  new THREE.MeshBasicMaterial({color: 0xCC0000, wireframe: true}),
+);
+scene.add(sphere);
 
-  // 球
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(10),
-    new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
-  );
-  scene.add(sphere);
+// ヘルパー
+const helper = new THREE.ArrowHelper(
+  frontVector,
+  new THREE.Vector3(0, 0, 0),
+  40,
+);
+sphere.add(helper);
 
-  // ヘルパー
-  var helper = new THREE.ArrowHelper(
-    frontVector,
-    new THREE.Vector3(0, 0, 0),
-    40
-  );
-  sphere.add(helper);
+// 地球
+const earth = new THREE.Mesh(
+  new THREE.SphereGeometry(70, 20, 20),
+  new THREE.MeshBasicMaterial({color: 0x666666, wireframe: true}),
+);
+scene.add(earth);
 
-  // 地球
-  var earth = new THREE.Mesh(
-    new THREE.SphereGeometry(70),
-    new THREE.MeshBasicMaterial({ color: 0x9999ff, wireframe: true })
-  );
-  scene.add(earth);
+// 地面
+const plane = new THREE.GridHelper(1000, 20);
+plane.position.y = -80;
+scene.add(plane);
 
-  // 地面
-  var plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(1000, 1000, 50, 50),
-    new THREE.MeshBasicMaterial({ color: 0x333333, wireframe: true })
-  );
-  plane.rotation.x = 90 * Math.PI / 180;
-  plane.position.y = -80;
-  scene.add(plane);
+// フレーム毎のレンダーを登録
+tick();
 
-  // フレーム毎のレンダーを登録
-  tick();
-  function tick() {
-    requestAnimationFrame(tick);
+function tick() {
+  requestAnimationFrame(tick);
 
-    // 球を回転させる
-    degree -= 2;
+  // 球を回転させる
+  degree -= 2;
 
-    // 現在の位置を保持しておく
-    var oldPosition = sphere.position.clone();
-    // アニメーション後の新しい位置を取得
-    var newPosition = getCircularMotionPosition(degree);
-    // oldPostion - newPositionで進んでいる方向のベクトルを算出
-    frontVector = newPosition.clone().sub(oldPosition);
-    // 単位ベクトルに変換
-    frontVector = frontVector.normalize();
+  // 現在の位置を保持しておく
+  const oldPosition = sphere.position.clone();
+  // アニメーション後の新しい位置を取得
+  const newPosition = getCircularMotionPosition(degree);
+  // oldPostion - newPositionで進んでいる方向のベクトルを算出
+  frontVector = newPosition.clone().sub(oldPosition);
+  // 単位ベクトルに変換
+  frontVector = frontVector.normalize();
 
-    // 球の位置を更新
-    sphere.position.copy(newPosition);
+  // 球の位置を更新
+  sphere.position.copy(newPosition);
 
-    // ヘルパーの向きを更新
-    helper.setDirection(frontVector);
+  // ヘルパーの向きを更新
+  helper.setDirection(frontVector);
 
-    renderer.render(scene, camera);
-  }
+  renderer.render(scene, camera);
+}
 
-  // 角度を渡して円運動の位置を返却します
-  function getCircularMotionPosition(deg) {
-    // 角度をラジアンに変換します
-    var rad = deg * Math.PI / 180;
-    // X座標 = 半径 x Cosθ
-    var x = radius * Math.cos(rad);
-    // Y座標
-    var y = radius * Math.sin(rad * 1.5) / 7;
-    // Z座標 = 半径 x Sinθ
-    var z = radius * Math.sin(rad);
+/**
+ * 角度を渡して円運動の位置を返却します
+ * @param {Number} degree 角度です。
+ * @returns {THREE.Vector3}
+ */
+function getCircularMotionPosition(degree) {
+  // 角度をラジアンに変換します
+  const rad = degree * Math.PI / 180;
+  // X座標 = 半径 x Cosθ
+  const x = radius * Math.cos(rad);
+  // Y座標
+  const y = radius * Math.sin(rad * 1.5) / 7;
+  // Z座標 = 半径 x Sinθ
+  const z = radius * Math.sin(rad);
 
-    return new THREE.Vector3(x, y, z);
-  }
-})();
+  return new THREE.Vector3(x, y, z);
+}
