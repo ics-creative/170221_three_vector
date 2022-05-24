@@ -43,20 +43,31 @@ const plane = new THREE.GridHelper(1000, 20);
 plane.position.y = -80;
 scene.add(plane);
 
+
+// ️アニメーション時間（ミリ秒）
+const duration = 1000;
+
+// アニメーションの開始時間を格納する変数
+const startTime= Date.now();
+
 // フレーム毎のレンダーを登録
 tick();
 
 function tick() {
   requestAnimationFrame(tick);
 
+  // 現在時間の継続時間に対する進捗度を算出
+  const progress = (Date.now() - startTime) / duration;
+
   // 球を回転させる
-  degree -= 2;
+  // 1秒(duration秒)で-120度回転する
+  degree = -120 * progress;
 
   // 現在の位置を保持しておく
   const oldPosition = sphere.position.clone();
   // アニメーション後の新しい位置を取得
   const newPosition = getCircularMotionPosition(degree);
-  // oldPostion - newPositionで進んでいる方向のベクトルを算出
+  // oldPosition - newPositionで進んでいる方向のベクトルを算出
   frontVector = newPosition.clone().sub(oldPosition);
   // 単位ベクトルに変換
   frontVector = frontVector.normalize();
