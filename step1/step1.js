@@ -8,8 +8,8 @@ camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 // レンダラー
 const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    canvas: document.querySelector('#myCanvas'),
+  antialias: true,
+  canvas: document.querySelector('#myCanvas'),
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -20,23 +20,23 @@ let frontVector = new THREE.Vector3(0, -1, 0);
 
 // 球
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(10),
-    new THREE.MeshBasicMaterial({color: 0xCC0000, wireframe: true}),
+  new THREE.SphereGeometry(10),
+  new THREE.MeshBasicMaterial({color: 0xCC0000, wireframe: true}),
 );
 scene.add(sphere);
 
 // ヘルパー
 const helper = new THREE.ArrowHelper(
-    frontVector,
-    new THREE.Vector3(0, 0, 0),
-    40,
+  frontVector,
+  new THREE.Vector3(0, 0, 0),
+  40,
 );
 sphere.add(helper);
 
 // 地球
 const earth = new THREE.Mesh(
-    new THREE.SphereGeometry(70, 20, 20),
-    new THREE.MeshBasicMaterial({color: 0x666666, wireframe: true}),
+  new THREE.SphereGeometry(70, 20, 20),
+  new THREE.MeshBasicMaterial({color: 0x666666, wireframe: true}),
 );
 scene.add(earth);
 
@@ -55,33 +55,32 @@ const startTime = Date.now();
 tick();
 
 function tick() {
-    requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
 
-    // 現在時間の継続時間に対する進捗度を算出
-    const progress = (Date.now() - startTime) / duration;
+  // 現在時間の継続時間に対する進捗度を算出
+  const progress = (Date.now() - startTime) / duration;
 
-    // 球を回転させる
-    // 1秒(duration秒)で-120度回転する
-    degree = -120 * progress;
+  // 球を回転させる
+  // 1秒(duration秒)で-120度回転する
+  degree = -120 * progress;
 
-    // 現在の位置を保持しておく
-    const oldPosition = sphere.position.clone();
-    // アニメーション後の新しい位置を取得
-    const newPosition = getCircularMotionPosition(degree);
-    // oldPosition - newPositionで進んでいる方向のベクトルを算出
-    frontVector = newPosition.clone().sub(oldPosition);
-    // 単位ベクトルに変換
-    frontVector = frontVector.normalize();
+  // 現在の位置を保持しておく
+  const oldPosition = sphere.position.clone();
+  // アニメーション後の新しい位置を取得
+  const newPosition = getCircularMotionPosition(degree);
+  // oldPosition - newPositionで進んでいる方向のベクトルを算出
+  frontVector = newPosition.clone().sub(oldPosition);
+  // 単位ベクトルに変換
+  frontVector = frontVector.normalize();
 
-    // 球の位置を更新
-    sphere.position.copy(newPosition);
+  // 球の位置を更新
+  sphere.position.copy(newPosition);
 
-    // ヘルパーの向きを更新
-    helper.setDirection(frontVector);
+  // ヘルパーの向きを更新
+  helper.setDirection(frontVector);
 
-    renderer.render(scene, camera);
+  renderer.render(scene, camera);
 }
-
 
 /**
  * 角度を渡して円運動の位置を返却します
@@ -89,25 +88,24 @@ function tick() {
  * @returns {THREE.Vector3}
  */
 function getCircularMotionPosition(degree) {
-    // 角度をラジアンに変換します
-    const rad = degree * Math.PI / 180;
-    // X座標 = 半径 x Cosθ
-    const x = radius * Math.cos(rad);
-    // Y座標
-    const y = radius * Math.sin(rad * 1.5) / 7;
-    // Z座標 = 半径 x Sinθ
-    const z = radius * Math.sin(rad);
+  // 角度をラジアンに変換します
+  const rad = degree * Math.PI / 180;
+  // X座標 = 半径 x Cosθ
+  const x = radius * Math.cos(rad);
+  // Y座標
+  const y = radius * Math.sin(rad * 1.5) / 7;
+  // Z座標 = 半径 x Sinθ
+  const z = radius * Math.sin(rad);
 
-    return new THREE.Vector3(x, y, z);
+  return new THREE.Vector3(x, y, z);
 }
-
 
 // リサイズ時の処理
 window.addEventListener('resize', () => {
-    // カメラのアスペクト比を更新
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+  // カメラのアスペクト比を更新
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-    // レンダラーのサイズを更新
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  // レンダラーのサイズを更新
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });

@@ -43,7 +43,6 @@ const plane = new THREE.GridHelper(1000, 20);
 plane.position.y = -80;
 scene.add(plane);
 
-
 // ️アニメーション時間（ミリ秒）
 const duration = 1000;
 
