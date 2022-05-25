@@ -47,10 +47,10 @@ scene.add(plane);
 // ️アニメーション時間（ミリ秒）
 const duration = 1000;
 
-// アニメーションの開始時間を格納する変数
-const startTime= Date.now();
+// アニメーションの開始時間を格納する
+const startTime = Date.now();
 
-// フレーム毎のレンダーを登録
+// フレーム毎のレンダーを登録 ※リフレッシュレートには依存しない
 tick();
 
 function tick() {
